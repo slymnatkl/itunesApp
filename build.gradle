@@ -17,6 +17,9 @@ buildscript {
 
         //Navigation
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.3.5")
+
+        //Hilt
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.38.1")
     }
 }
 

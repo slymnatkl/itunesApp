@@ -6,7 +6,9 @@ import androidx.navigation.ui.NavigationUI
 import com.itunesapp.R
 import com.itunesapp.core.activities.BaseActivity
 import com.itunesapp.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private lateinit var navigationController: NavController

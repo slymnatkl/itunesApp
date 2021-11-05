@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "iTunes App"
 include ':app'
 include ':core'
+include ':repository'
