@@ -1,6 +1,7 @@
 package com.itunesapp.view.fragments
 
 import android.app.Dialog
+import android.view.View
 import androidx.fragment.app.viewModels
 import com.itunesapp.R
 import com.itunesapp.core.fragments.BaseFragment
@@ -39,6 +40,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 showProgressDialog()
             else
                 hideProgressDialog()
+        })
+
+        viewModel.empty.observe(this, { isEmpty ->
+
+            if (isEmpty) {
+                binding.recyclerView.visibility = View.GONE
+                binding.layoutEmpty.visibility = View.VISIBLE
+            }
+            else{
+                binding.layoutEmpty.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+            }
         })
 
         viewModel.error.observe(this, { errorResponse ->

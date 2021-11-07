@@ -6,6 +6,7 @@
     <color name="dark_color">#bcbcbc</color>
     <color name="text_color">#000000</color>
     <color name="progress_color">#000000</color>
+    <color name="toggle_background_color">#eeeeee</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

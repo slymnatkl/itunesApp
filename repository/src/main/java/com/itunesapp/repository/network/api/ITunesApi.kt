@@ -10,6 +10,7 @@ interface ITunesApi {
     @GET("search")
     suspend fun getMedias(
         @Query("term") term: String,
+        @Query("entity") entity: String?,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
     ): BaseListResponse<Media>

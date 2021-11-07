@@ -5,6 +5,7 @@
     <color name="light_color">#ffffff</color>
     <color name="dark_color">#bcbcbc</color>
     <color name="text_color">#000000</color>
+    <color name="icon_color">#212121</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>

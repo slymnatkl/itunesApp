@@ -5,6 +5,7 @@
     xmlns:recyclerView="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="homeViewModel"
             type="com.itunesapp.viewmodel.HomeViewModel" />
@@ -28,11 +29,16 @@
                 android:queryHint="@string/search_hint"
                 android:queryBackground="@null"
                 android:iconifiedByDefault="false"
-                android:onQueryTextChange="@{homeViewModel::onQueryTextChange}"
-                android:onQueryTextSubmit="@{homeViewModel::onQueryTextSubmit}"
+                app:setOnQueryTextListener="@{homeViewModel.searchQueryChangeListener}"
                 />
 
         </androidx.cardview.widget.CardView>
+
+        <com.itunesapp.core.components.EntityFilterPicker
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:setOnEntityFilterPickerListener="@{homeViewModel.entityFilterPickerListener}"
+            />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
@@ -44,11 +50,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:visibility="gone"
 
                     android:orientation="vertical"
                     recyclerView:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -56,6 +65,27 @@
 
                     android:adapter="@{homeViewModel.adapterMedia}"
                     />
+
+                <LinearLayout
+                    android:id="@+id/layoutEmpty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:src="@drawable/ic_empty"/>
+
+                    <TextView
+                        android:layout_marginTop="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/empty_text"/>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 

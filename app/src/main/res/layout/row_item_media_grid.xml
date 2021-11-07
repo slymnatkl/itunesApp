@@ -67,7 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="Collection Name"
-                        android:text="@{item.collectionName}"
+                        android:text="@{item.getShownName()}"
                         android:textStyle="bold"
                         android:textSize="12sp"
                         android:textColor="@color/text_color"/>
@@ -93,7 +93,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            app:showPriceFormat="@{item.collectionPrice}"
+                            app:showPriceFormat="@{item.getShownPrice()}"
                             android:textColor="@color/text_color"
                             android:textSize="13sp"
                             android:textStyle="bold"

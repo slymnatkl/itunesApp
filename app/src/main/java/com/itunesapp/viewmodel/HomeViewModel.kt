@@ -1,10 +1,13 @@
 package com.itunesapp.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.SearchView
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.itunesapp.R
+import com.itunesapp.core.components.EntityFilterPicker
+import com.itunesapp.repository.model.EntityType
 import com.itunesapp.repository.model.Media
 import com.itunesapp.repository.network.repository.Repository
 import com.itunesapp.repository.network.response.ErrorResponse
@@ -21,14 +24,16 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val repository: Repository): BaseViewModel(){
 
-
     //<editor-fold desc="Variables">
 
     private var context : Context? = null
 
     private lateinit var medias: Flow<PagingData<Media>>
-    private var query: String? = null
+    private var qTerm: String? = null
+    private var qEntity: EntityType = EntityType.NONE
     val adapterMedia = MediaAdapter()
+
+    val empty = MutableLiveData<Boolean>()
 
     //</editor-fold>
 
@@ -42,6 +47,11 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
     init {
         launch {
 
+            adapterMedia.addLoadStateListener {
+
+                empty.value = adapterMedia.itemCount == 0
+            }
+
             adapterMedia.loadStateFlow.collectLatest { loadStates ->
 
                 loading.value = (loadStates.refresh is LoadState.Loading)
@@ -51,55 +61,89 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
                 else
                     error.value = null
             }
-        }
 
-        fetchMedias()
+            empty.value = true
+        }
     }
 
     //</editor-fold>
 
-    //<editor-fold desc="Search Query">
+    //<editor-fold desc="Search & Filter Query">
 
     private var searchJob: Job? = null
 
-    fun onQueryTextChange(query: String?): Boolean {
+    val searchQueryChangeListener = object : SearchView.OnQueryTextListener{
 
-        this@HomeViewModel.query = query
+        override fun onQueryTextSubmit(query: String?): Boolean {
 
-        searchJob?.cancel()
+            this@HomeViewModel.qTerm = query
 
-        if (!query.isNullOrEmpty() && query.length >= 2){
+            searchJob?.cancel()
+            refreshPage()
 
-            searchJob = launch {
-
-                delay(700)
-                refreshPage()
-            }
+            return true
         }
 
-        return true
+        override fun onQueryTextChange(query: String?): Boolean {
+
+            this@HomeViewModel.qTerm = query
+
+            searchJob?.cancel()
+
+            if (!query.isNullOrEmpty() && query.length >= 2)
+                filterDelayed()
+
+            return true
+        }
     }
 
-    fun onQueryTextSubmit(query: String?): Boolean {
+    val entityFilterPickerListener = object : EntityFilterPicker.EntityFilterPickerListener{
 
-        this@HomeViewModel.query = query
+        override fun onFilteredByMovies() {
+            qEntity = EntityType.MOVIES
+            filterDelayed()
+        }
 
-        searchJob?.cancel()
-        refreshPage()
+        override fun onFilteredByMusic() {
+            qEntity = EntityType.MUSIC
+            filterDelayed()
+        }
 
-        return true
+        override fun onFilteredByApps() {
+            qEntity = EntityType.APPS
+            filterDelayed()
+        }
+
+        override fun onFilteredByBooks() {
+            qEntity = EntityType.BOOKS
+            filterDelayed()
+        }
+
+        override fun onAllFiltersRemoved() {
+            qEntity = EntityType.NONE
+            filterDelayed()
+        }
+    }
+
+    private fun filterDelayed(){
+
+        searchJob = launch {
+
+            delay(700)
+            refreshPage()
+        }
     }
 
     fun refreshPage(){
 
-        if (!query.isNullOrEmpty()){
+        if (!qTerm.isNullOrEmpty()){
 
             fetchMedias()
         }
         else{
             loading.value = false
             context?.let {
-                error.value = ErrorResponse(it.getString(R.string.search_hint))
+                error.value = ErrorResponse(it.getString(R.string.empty_text))
             }
         }
     }
@@ -110,10 +154,14 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
 
     private fun fetchMedias(){
 
-        query?.let {
+        qTerm?.let {
 
             medias = Pager(PagingConfig(pageSize = MediaDataSource.LIMIT)){
-                MediaDataSource(repository, query!!)
+                MediaDataSource(
+                    repository,
+                    qTerm!!,
+                    qEntity.value
+                )
             }.flow.cachedIn(viewModelScope)
 
             launch {
