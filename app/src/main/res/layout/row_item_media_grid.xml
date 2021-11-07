@@ -83,7 +83,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             tools:text="11.11.2021"
-                            android:text="@{StringExtensionKt.formatReleaseDate(item.releaseDate)}"
+                            app:showReleaseDate="@{item.releaseDate}"
                             android:textStyle="italic"
                             android:textSize="11sp"
                             android:textColor="@color/text_color"/>
@@ -93,7 +93,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="@{item.collectionPrice}"
+                            app:showPriceFormat="@{item.collectionPrice}"
                             android:textColor="@color/text_color"
                             android:textSize="13sp"
                             android:textStyle="bold"

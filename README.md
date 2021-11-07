@@ -1,8 +1,8 @@
-![alt text](https://i.pinimg.com/originals/06/59/ee/0659ee4a07929a77ea29da8b6d996754.jpg)
+![alt text](https://www.teknotalk.com/wp-content/uploads/2015/04/Itunes-logo.png)
 
-# MarvelApp
+# ItunesApp
 
-It is an application developed using The Marvel Comics API 
+It is an application developed using The Itunes Search API 
 
 ## Features
 - [Kotlin](https://kotlinlang.org/docs/home.html)
@@ -15,7 +15,6 @@ It is an application developed using The Marvel Comics API
 - [Retrofit](https://square.github.io/retrofit/)
 - [Glide](https://bumptech.github.io/glide/)
 - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
-- [Firebase Integration](https://firebase.google.com/docs/android/setup)
 
 ## License
 [slymnatkl](http://suleymanatakul.com/)
