@@ -2,20 +2,13 @@ package com.itunesapp.view.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.itunesapp.databinding.RowItemMediaGridBinding
 import com.itunesapp.repository.model.Media
-import javax.inject.Inject
 
-class MediaAdapter @Inject constructor(): RecyclerView.Adapter<MediaAdapter.MediaViewHolder>() {
-
-    var itemList: List<Media> = ArrayList()
-
-    fun setItems(itemList: List<Media>){
-
-        this@MediaAdapter.itemList = itemList
-        notifyDataSetChanged()
-    }
+class MediaAdapter : PagingDataAdapter<Media, MediaAdapter.MediaViewHolder>(DiffUtilCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaViewHolder {
         val binding = RowItemMediaGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,13 +16,19 @@ class MediaAdapter @Inject constructor(): RecyclerView.Adapter<MediaAdapter.Medi
     }
 
     override fun onBindViewHolder(holder: MediaViewHolder, position: Int) {
-
-        holder.binding.item = itemList[position]
-    }
-
-    override fun getItemCount(): Int {
-        return itemList.size
+        holder.binding.item = getItem(position)
     }
 
     class MediaViewHolder(val binding: RowItemMediaGridBinding): RecyclerView.ViewHolder(binding.root)
+
+    class DiffUtilCallBack: DiffUtil.ItemCallback<Media>() {
+
+        override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
+            return oldItem.collectionId == newItem.collectionId
+        }
+
+        override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean {
+            return oldItem.equals(newItem);
+        }
+    }
 }

@@ -1,8 +1,8 @@
 package com.itunesapp.view.fragments
 
+import android.app.Dialog
 import androidx.fragment.app.viewModels
 import com.itunesapp.R
-import com.itunesapp.core.extensions.formatDate
 import com.itunesapp.core.fragments.BaseFragment
 import com.itunesapp.databinding.FragmentHomeBinding
 import com.itunesapp.viewmodel.HomeViewModel
@@ -26,10 +26,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initViewModel(){
 
+        viewModel.setContext(requireContext())
         binding.homeViewModel = viewModel
         observeViewModel()
-
-        viewModel.getMedias()
     }
 
     private fun observeViewModel(){
@@ -44,10 +43,48 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         viewModel.error.observe(this, { errorResponse ->
 
-            errorResponse.message?.let {
+            errorResponse?.message?.let {
                 showMessage(it)
             }
         })
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Show & Hide ProgressDialog">
+
+    private var mSwipeRefreshBackround: Dialog? = null
+
+    override fun showProgressDialog() {
+
+        if (binding.swipeRefreshLayout.isRefreshing) {
+
+            mSwipeRefreshBackround ?: run {
+
+                mSwipeRefreshBackround = Dialog(requireContext())
+                mSwipeRefreshBackround!!.setCancelable(false)
+            }
+
+            mSwipeRefreshBackround!!.show()
+        }
+        else
+            super.showProgressDialog()
+    }
+
+    override fun hideProgressDialog() {
+
+        if(binding.swipeRefreshLayout.isRefreshing){
+
+            binding.swipeRefreshLayout.isRefreshing = false
+
+            mSwipeRefreshBackround?.let {
+
+                if(it.isShowing)
+                    it.dismiss()
+            }
+        }
+        else
+            super.hideProgressDialog()
     }
 
     //</editor-fold>

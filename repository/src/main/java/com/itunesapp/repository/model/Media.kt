@@ -7,6 +7,9 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 open class Media: Parcelable {
 
+    @SerializedName("collectionId")
+    val collectionId: Int? = null
+
     @SerializedName("trackId")
     val trackId: Int? = null
 
