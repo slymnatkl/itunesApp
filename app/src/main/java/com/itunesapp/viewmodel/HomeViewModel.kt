@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
 
             this@HomeViewModel.qTerm = query
             searchJob?.cancel()
-            fetchDelayed(false)
+            fetchDelayed(showEmpty = false, enableDelay = false)
 
             return true
         }
@@ -90,7 +90,7 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
 
             this@HomeViewModel.qTerm = query
             searchJob?.cancel()
-            fetchDelayed(false)
+            fetchDelayed(showEmpty = false, enableDelay = true)
 
             return true
         }
@@ -100,37 +100,39 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
 
         override fun onFilteredByMovies() {
             qMedia = MediaType.MOVIES
-            fetchDelayed(true)
+            fetchDelayed(showEmpty = true, enableDelay = false)
         }
 
         override fun onFilteredByMusic() {
             qMedia = MediaType.MUSIC
-            fetchDelayed(true)
+            fetchDelayed(showEmpty = true, enableDelay = false)
         }
 
         override fun onFilteredByApps() {
             qMedia = MediaType.APPS
-            fetchDelayed(true)
+            fetchDelayed(showEmpty = true, enableDelay = false)
         }
 
         override fun onFilteredByBooks() {
             qMedia = MediaType.BOOKS
-            fetchDelayed(true)
+            fetchDelayed(showEmpty = true, enableDelay = false)
         }
 
         override fun onAllFiltersRemoved() {
             qMedia = MediaType.ALL
-            fetchDelayed(true)
+            fetchDelayed(showEmpty = true, enableDelay = false)
         }
     }
 
-    private fun fetchDelayed(showEmpty: Boolean){
+    private fun fetchDelayed(showEmpty: Boolean, enableDelay: Boolean){
 
         if((!qTerm.isNullOrEmpty() && qTerm!!.length >= 2)){
 
             searchJob = launch {
 
-                delay(700)
+                if(enableDelay)
+                    delay(700)
+
                 refreshPage()
             }
         }
