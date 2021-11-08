@@ -10,6 +10,25 @@
         android:name="com.itunesapp.view.fragments.HomeFragment"
         android:label="@string/app_name" >
 
+        <action
+            android:id="@+id/act_home_to_detail"
+            app:destination="@id/detailFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.itunesapp.view.fragments.DetailFragment"
+        android:label="@string/app_name" >
+
+        <argument
+            android:name="media"
+            app:argType="com.itunesapp.repository.model.Media" />
+
     </fragment>
 
 </navigation>

@@ -3,9 +3,12 @@ package com.itunesapp.view.fragments
 import android.app.Dialog
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.itunesapp.R
 import com.itunesapp.core.fragments.BaseFragment
 import com.itunesapp.databinding.FragmentHomeBinding
+import com.itunesapp.repository.model.Media
+import com.itunesapp.view.adapters.MediaAdapter
 import com.itunesapp.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,6 +20,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun initPage(){
 
         initViewModel()
+        initAdapter()
+    }
+
+    private fun initAdapter(){
+
+        viewModel.adapterMedia.setOnItemClickListener(object : MediaAdapter.ItemClickListener{
+            override fun onItemClicked(item: Media) {
+                navigateToDetail(item)
+            }
+        })
     }
 
     //</editor-fold>
@@ -60,6 +73,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 showMessage(it)
             }
         })
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="Navigate Fragments">
+
+    private fun navigateToDetail(media: Media){
+
+        val action = HomeFragmentDirections.actHomeToDetail(media)
+        findNavController().navigate(action)
     }
 
     //</editor-fold>

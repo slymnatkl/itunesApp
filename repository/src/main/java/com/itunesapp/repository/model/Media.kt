@@ -25,17 +25,23 @@ open class Media: Parcelable {
     @SerializedName("price")
     val price: String? = null
 
+    @SerializedName("currency")
+    val currency: String? = null
+
     @SerializedName("artworkUrl100")
     val artworkUrl100: String? = null
 
     @SerializedName("releaseDate")
     val releaseDate: String? = null
 
-    @SerializedName("kind")
-    val kind: String? = null
-
     @SerializedName("description")
     val description: String? = null
+
+    @SerializedName("shortDescription")
+    val shortDescription: String? = null
+
+    @SerializedName("longDescription")
+    val longDescription: String? = null
 
     fun getShownName(): String?{
 
@@ -53,6 +59,18 @@ open class Media: Parcelable {
             return collectionPrice
         else if(!price.isNullOrEmpty())
             return price
+        else
+            return null
+    }
+
+    fun getShownDescription(): String?{
+
+        if(!description.isNullOrEmpty())
+            return description
+        else if(!longDescription.isNullOrEmpty())
+            return longDescription
+        else if(!shortDescription.isNullOrEmpty())
+            return shortDescription
         else
             return null
     }

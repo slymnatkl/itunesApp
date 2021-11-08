@@ -1,5 +1,6 @@
 package com.itunesapp.viewmodel
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.SearchView
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.itunesapp.R
 import com.itunesapp.core.components.EntityFilterPicker
-import com.itunesapp.repository.model.EntityType
 import com.itunesapp.repository.model.Media
+import com.itunesapp.repository.model.MediaType
 import com.itunesapp.repository.network.repository.Repository
 import com.itunesapp.repository.network.response.ErrorResponse
 import com.itunesapp.view.adapters.MediaAdapter
@@ -26,14 +27,16 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
 
     //<editor-fold desc="Variables">
 
+    @SuppressLint("StaticFieldLeak")
     private var context : Context? = null
 
+    val empty = MutableLiveData<Boolean>()
+
     private lateinit var medias: Flow<PagingData<Media>>
-    private var qTerm: String? = null
-    private var qEntity: EntityType = EntityType.NONE
     val adapterMedia = MediaAdapter()
 
-    val empty = MutableLiveData<Boolean>()
+    private var qTerm: String? = null
+    private var qMedia: MediaType = MediaType.ALL
 
     //</editor-fold>
 
@@ -77,9 +80,8 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
         override fun onQueryTextSubmit(query: String?): Boolean {
 
             this@HomeViewModel.qTerm = query
-
             searchJob?.cancel()
-            refreshPage()
+            fetchDelayed(false)
 
             return true
         }
@@ -87,11 +89,8 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
         override fun onQueryTextChange(query: String?): Boolean {
 
             this@HomeViewModel.qTerm = query
-
             searchJob?.cancel()
-
-            if (!query.isNullOrEmpty() && query.length >= 2)
-                filterDelayed()
+            fetchDelayed(false)
 
             return true
         }
@@ -100,37 +99,43 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
     val entityFilterPickerListener = object : EntityFilterPicker.EntityFilterPickerListener{
 
         override fun onFilteredByMovies() {
-            qEntity = EntityType.MOVIES
-            filterDelayed()
+            qMedia = MediaType.MOVIES
+            fetchDelayed(true)
         }
 
         override fun onFilteredByMusic() {
-            qEntity = EntityType.MUSIC
-            filterDelayed()
+            qMedia = MediaType.MUSIC
+            fetchDelayed(true)
         }
 
         override fun onFilteredByApps() {
-            qEntity = EntityType.APPS
-            filterDelayed()
+            qMedia = MediaType.APPS
+            fetchDelayed(true)
         }
 
         override fun onFilteredByBooks() {
-            qEntity = EntityType.BOOKS
-            filterDelayed()
+            qMedia = MediaType.BOOKS
+            fetchDelayed(true)
         }
 
         override fun onAllFiltersRemoved() {
-            qEntity = EntityType.NONE
-            filterDelayed()
+            qMedia = MediaType.ALL
+            fetchDelayed(true)
         }
     }
 
-    private fun filterDelayed(){
+    private fun fetchDelayed(showEmpty: Boolean){
 
-        searchJob = launch {
+        if((!qTerm.isNullOrEmpty() && qTerm!!.length >= 2)){
 
-            delay(700)
-            refreshPage()
+            searchJob = launch {
+
+                delay(700)
+                refreshPage()
+            }
+        }
+        else if(showEmpty){
+            empty.value = true
         }
     }
 
@@ -157,11 +162,7 @@ class HomeViewModel @Inject constructor(private val repository: Repository): Bas
         qTerm?.let {
 
             medias = Pager(PagingConfig(pageSize = MediaDataSource.LIMIT)){
-                MediaDataSource(
-                    repository,
-                    qTerm!!,
-                    qEntity.value
-                )
+                MediaDataSource(repository, qTerm!!, qMedia.value)
             }.flow.cachedIn(viewModelScope)
 
             launch {

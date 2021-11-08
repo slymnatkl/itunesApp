@@ -9,7 +9,7 @@ import javax.inject.Inject
 class MediaDataSource @Inject constructor(
     private val repository: Repository,
     private val qTerm: String,
-    private val qEntity: String?
+    private val qMedia: String?
     ): PagingSource<Int, Media>() {
 
     override fun getRefreshKey(state: PagingState<Int, Media>): Int? {
@@ -20,7 +20,7 @@ class MediaDataSource @Inject constructor(
 
         return try {
             val nextPageNumber = params.key ?: STARTING_INDEX
-            val response = repository.getMedias(qTerm, qEntity, (nextPageNumber * LIMIT), LIMIT)
+            val response = repository.getMedias(qTerm, qMedia, (nextPageNumber * LIMIT), LIMIT)
 
             LoadResult.Page(
                 data = response.results!!,

@@ -34,13 +34,21 @@ abstract class BaseActivity<VDBinding : ViewDataBinding>(
 
     fun showProgressDialog(){
 
-        progressDialog = getProgressDialog()
-        progressDialog?.show()
+        if(progressDialog == null)
+            progressDialog = getProgressDialog()
+
+        progressDialog?.let {
+            if(!it.isShowing)
+                it.show()
+        }
     }
 
     fun hideProgressDialog(){
 
-        progressDialog?.dismiss()
+        progressDialog?.let {
+            if(it.isShowing)
+                it.dismiss()
+        }
     }
 
     //</editor-fold>

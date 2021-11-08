@@ -1,22 +1,23 @@
 package com.itunesapp.repository.model
 
-enum class EntityType(val value: String?) {
+enum class MediaType(val value: String?) {
 
-    NONE(null),
+    ALL("all"),
     MOVIES("movie"),
-    MUSIC("musicTrack"),
+    MUSIC("music"),
     APPS("software"),
     BOOKS("ebook");
 
     companion object {
-        fun getTypeByString(kind: String?): EntityType{
+
+        fun getTypeByString(kind: String?): MediaType{
 
             return when (kind) {
                 MOVIES.value -> MOVIES
                 MUSIC.value -> MUSIC
                 APPS.value -> APPS
                 BOOKS.value -> BOOKS
-                else -> NONE
+                else -> ALL
             }
         }
     }
