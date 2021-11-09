@@ -19,13 +19,15 @@ class MediaDataSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Media> {
 
         return try {
-            val nextPageNumber = params.key ?: STARTING_INDEX
-            val response = repository.getMedias(qTerm, qMedia, (nextPageNumber * LIMIT), LIMIT)
+            val pageNumber = params.key ?: STARTING_INDEX
+            val response = repository.getMedias(qTerm, qMedia, (pageNumber * LIMIT), LIMIT)
+
+            val nextPageNumber = response.results?.let { pageNumber + 1 } ?: run { null }
 
             LoadResult.Page(
-                data = response.results!!,
+                data = response.results ?: run { emptyList() },
                 prevKey = null,
-                nextKey = if(response.results.isNullOrEmpty()) null else (nextPageNumber + 1)
+                nextKey = nextPageNumber
             )
         }
         catch (e: Exception) {
